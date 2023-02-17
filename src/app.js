@@ -1,10 +1,12 @@
 const path = require('path')
 const express = require('express')
+const methodOverride = require('method-override');
 const cfc = require('./db/data')
 require("./db/data")
 
 const app=express()
 const bodyParser = require("body-parser")
+app.use(methodOverride('_method'));
 
 app.use(express.json())
 const publicDirectoryPath = path.join(__dirname, '../public')
@@ -40,7 +42,7 @@ app.get('/player', async (req, res) => {
 
     try {
     const cfcData = await cfc.find({})
-    res.render('new', { data: cfcData })
+    res.render('new', { cfcData })
         } catch (error) {
     console.log(error)
   }
@@ -68,11 +70,11 @@ app.get('/cfcs', async (req, res) => {
 
     }
 })
-
+//
 app.get('/new', async (req, res) => {
     try {
       const cfcData = await cfc.find({})
-      res.render('new', { data: cfcData })
+      res.render('new', { cfcData })
     } catch (error) {
       console.log(error)
     }
@@ -88,7 +90,6 @@ app.delete('/cfc/:id', async (req, res) => {
       res.status(500).send({ error: 'Internal server error' })
     }
   })
-
 
 app.get('*',(req,res)=>{
     res.send("Erorr 404")
