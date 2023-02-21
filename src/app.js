@@ -48,29 +48,14 @@ app.get('/player', async (req, res) => {
   }
 })
 
-app.post("/cfc", async (req, res) => {
-    
+app.post("/cfc", async (req, res) => { 
     const { name,age,position,nationality } = req.body 
     const data = req.body
     console.log(data)
     const CFC = await cfc.create(data)
     res.redirect('/new')
     // res.send({ data: cfc })
-
 })
-
-//postman
-app.get('/cfcs', async (req, res) => {
-    try {
-        const CFC = await cfc.find({})
-        res.send({ data: CFC })
-
-    } catch (error) {
-        console.log(error)
-
-    }
-})
-//
 app.get('/new', async (req, res) => {
     try {
       const cfcData = await cfc.find({})
@@ -79,7 +64,8 @@ app.get('/new', async (req, res) => {
       console.log(error)
     }
   })
-  
+
+
 app.delete('/cfc/:id', async (req, res) => {
     try {
       const id = req.params.id;
@@ -91,10 +77,38 @@ app.delete('/cfc/:id', async (req, res) => {
     }
   })
 
-app.get('*',(req,res)=>{
-    res.send("Erorr 404")
-})
 
-app.listen(3000, () => {
+app.get('/cfc/:id/edit', async (req, res) => {
+    cfc.findById(req.params.id, (err, player) => {
+      if (err) {
+        console.log(err)
+        res.redirect('/cfc')
+      } else {
+        res.render('edit', { player })
+      }
+    })
+  })
+  
+  app.post('/cfc/:id', async (req, res) => {
+    console.log('Request Body:', req.body)
+    cfc.findByIdAndUpdate(req.params.id, req.body, { new: true }, (err, updatedPlayer) => {
+      if (err) {
+        console.log(err)
+        res.redirect('/new')
+      } else {
+        console.log('Updated Player:', updatedPlayer)
+        res.redirect('/new')
+      }
+    })
+  })
+  
+  app.get('*', (req, res) => {
+    res.send('Error 404')
+  })
+  
+  app.listen(3000, () => {
     console.log('Server is up')
-})
+  })
+  
+  
+  
